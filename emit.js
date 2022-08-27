@@ -1,45 +1,30 @@
 const { SerialPort } = require('serialport')
 
-// const port = "COM5";
-// const staringNum = 0;
-// const endingNum = 9;
+const port = "COM5";
+const staringDegree = 25;
+const endingDegree = 255;
+// every 1.2777 is one degree
 
-// // create connection to serial port
-// const serialPort = new SerialPort({
-//   path:port,
-//   baudRate:9600,
-//   // encoding:'hex'
-// });
+// create connection to serial port
+const serialPort = new SerialPort({
+  path:port,
+  baudRate:9600,
+});
 
 
-let dg = [0,0,0];
-const incInterval = setInterval(() => { 
-  if (dg[0] == 9 && dg[1] === 9  && dg[2] === 9) {
-    clearInterval(incInterval);
-    return;
+let dg = staringDegree;
+setInterval(() => { 
+  if (dg < endingDegree) {
+    dg++;
+    sendMessage(dg);
   }
-
-  if (dg[2] < 9) {
-    dg[2]++;
+  else {
+    dg = 25;
   }
-  else if(dg[1] < 9) {
-    dg[2] = 0;
-    dg[1]++;
-  }
-  else if(dg[0] < 9) {
-    dg[2] = 0;
-    dg[1] = 0;
-    dg[0]++;
-  }
-  // sendMessage(dg);
-  console.log(dg);
-}, 2);
+}, 4);
 
-
-// sendMessage(0)
-// @param dg -  [0,0,1]  Hundreds, Tens, 0-9
 function sendMessage(dg) {
-  const buffer = new Buffer( [dg]);
+  const buffer = new Buffer([ dg]);
   serialPort.write(buffer, (err) => {
     if (err) {
       return console.log("Error on write: ", err.dg);
