@@ -1,19 +1,44 @@
-const { SerialPort } = require('serialport')
+const usb = require('usb');
+const { SerialPort } = require('serialport');
+const path = require('path');
 
-SerialPort.list().then(ports => {
-    console.log(ports);
-    ports.forEach(function(port) {
-        console.log(port.path)
-    })
-},(e) => {
-    console.log(e);
+const readline = require('readline').createInterface({
+    input: process.stdin,
+    output: process.stdout,
+});
+
+async function findeDeviceBySerialNumber(serialNumber){
+    const res = await usb.findBySerialNumber(String(serialNumber));
+    console.log(res);
+}
+
+async function readFromUsb() {
+    let objArr = [];
+    const ports = await SerialPort.list()
+    objArr = ports.map((port) => port);
+    objArr.forEach((obj, index) => {
+
+        console.log(`name: ${obj.friendlyName}`);
+    });
+    return objArr;
+}
+async function main() {
+    const usbList = await readFromUsb();
+    return new Promise((resolve, reject) => {
+        resolve(usbList);
+    });
+}
+main().then((devices) => {
+    devices.forEach((device) => {
+        const usb = new SerialPort({path: device.path, baudRate: 9600});
+        usb.on('open', () => {
+            console.log("connected!");
+            usb.on('data', (data) => {
+                const buffer = data;
+                const t = buffer.toString();
+                console.log(t);
+            })
+        })
+    });
+
 })
-
-// path: 'COM5',
-// manufacturer: 'FTDI',
-// serialNumber: 'A50285BI',
-// pnpId: 'FTDIBUS\\VID_0403+PID_6001+A50285BIA\\0000',
-// locationId: undefined,
-// friendlyName: 'USB Serial Port (COM5)',
-// vendorId: '0403',
-// productId: '6001'
