@@ -1,7 +1,8 @@
 const usb = require('usb');
 const { SerialPort } = require('serialport');
 const path = require('path');
-
+const sendRequest = require('./http_client');
+const apiUrl = `http://127.0.0.1:3000`
 const readline = require('readline').createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -28,15 +29,30 @@ async function main() {
         resolve(usbList);
     });
 }
+
+async function sendAllData(payload) {
+    const url = `${apiUrl}/station/payload`;
+    sendRequest(url, 'POST', {data:payload})
+        .then((res) => {
+            if (res.status !== 500) {
+                console.log(res.status);
+                console.log(res.data);
+            }
+        })
+        .catch((err) => {
+            console.error(err);
+        });
+}
+
 main().then((devices) => {
     devices.forEach((device) => {
         const usb = new SerialPort({path: device.path, baudRate: 9600});
-        usb.on('open', () => {
+        usb.on('open', async () => {
             console.log("connected!");
-            usb.on('data', (data) => {
+            usb.on('data', async (data) => {
                 const buffer = data;
                 const t = buffer.toString();
-                console.log(t);
+                await sendAllData(t);
             })
         })
     });
