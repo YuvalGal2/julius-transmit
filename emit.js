@@ -1,14 +1,11 @@
+
 const { SerialPort } = require('serialport')
 
-const port = "COM5";
-const staringDegree = 25;
-const endingDegree = 255;
+ const port = "COM5";
+ const staringDegree = 25;
+ const endingDegree = 255;
 // every 1.2777 is one degree
-
-const serialPort = connectToChip();
-linarMoveToEnd();
-
-function connectToChip() {
+ function connectToChip() {
   // create connection to serial port
   const serialPort = new SerialPort({
     path:port,
@@ -17,7 +14,7 @@ function connectToChip() {
   return serialPort;
 }
 
-function sendMessage(dg) {
+ function sendMessage(dg,serialPort) {
   const buffer = new Buffer([ dg]);
   serialPort.write(buffer, (err) => {
     if (err) {
@@ -27,9 +24,9 @@ function sendMessage(dg) {
   });
 }
 
-function linarMoveToEnd() {
+ function linarMoveToEnd() {
 let linarCurrentDegree = staringDegree;
-  const linarInterval = setInterval(() => { 
+  const linarInterval = setInterval(() => {
     if (linarCurrentDegree <= endingDegree) {
       sendMessage(linarCurrentDegree);
       linarCurrentDegree++;
@@ -39,4 +36,8 @@ let linarCurrentDegree = staringDegree;
     }
   }, 4);
 }
-
+module.exports = {
+  linarMoveToEnd,
+  sendMessage,
+  connectToChip
+}
