@@ -13,6 +13,7 @@ app.post("", function (req, res, next) {
   const data = req.body.data;
   const payload = [data.x, data.y];
   console.log(payload);
+//  console.log(payload);
   emit.sendMessage(payload);
   res.end();
 });

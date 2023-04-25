@@ -11,7 +11,7 @@ module.exports = async function sendRequest(url, method = 'GET', data) {
             headers: customHeaders,
             body: JSON.stringify(data),
         });
-        console.log(response)
+        // console.log(response)
         return response;
     }
     catch (e) {

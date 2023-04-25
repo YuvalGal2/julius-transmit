@@ -10,7 +10,7 @@ const readline = require('readline').createInterface({
 
 async function findeDeviceBySerialNumber(serialNumber){
     const res = await usb.findBySerialNumber(String(serialNumber));
-    console.log(res);
+    // console.log(res);
 }
 
 async function readFromUsb() {
@@ -35,8 +35,8 @@ async function sendAllData(payload) {
     sendRequest(url, 'POST', {data:payload})
         .then((res) => {
             if (res.status !== 500) {
-                console.log(res.status);
-                console.log(res.data);
+               // console.log(res.status);
+               // console.log(res.data);
             }
         })
         .catch((err) => {
