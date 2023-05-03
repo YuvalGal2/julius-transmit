@@ -12,8 +12,8 @@ app.use(cors());
 app.post("", function (req, res, next) {
   const data = req.body.data;
   const payload = [data.x, data.y];
-  console.log(payload);
-//  console.log(payload);
+  //console.log(payload);
+  //  console.log(payload);
   emit.sendMessage(payload);
   res.end();
 });
@@ -23,6 +23,6 @@ app.listen(4567, function () {
 });
 
 process.on("uncaughtException", function (err) {
-  console.error(err);
+  console.error(err); //important
   // console.log("Node NOT Exiting...");
 });
